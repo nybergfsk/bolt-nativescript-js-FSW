@@ -1,0 +1,15 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo">
+    <ActionBar title="Login" icon="" />
+    <StackLayout class="p-6">
+        <Label text="Welcome" class="text-3xl font-bold text-center mb-6" />
+        
+        <Label text="Email" class="text-lg mb-2" />
+        <TextField text="{{ email }}" hint="Enter your email" keyboardType="email" class="p-3 mb-4 border rounded" />
+        
+        <Label text="Password" class="text-lg mb-2" />
+        <TextField text="{{ password }}" hint="Enter your password" secure="true" class="p-3 mb-6 border rounded" />
+        
+        <Button text="Login" tap="{{ onLogin }}" class="-primary mb-3" />
+        <Label text="{{ message }}" class="text-sm text-center text-red-500" textWrap="true" />
+    </StackLayout>
+</Page>

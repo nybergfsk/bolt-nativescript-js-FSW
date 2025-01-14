@@ -1,0 +1,35 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo">
+    <ActionBar title="Support Formulär" icon="" />
+    <ScrollView>
+        <GridLayout rows="auto, *">
+            <StackLayout row="0" class="p-6">
+                <Label text="Support Formulär" class="text-3xl font-bold text-center mb-6" />
+                
+                <Label text="Tidstämpel:" class="text-lg mb-2" />
+                <TextField text="{{ timestamp }}" isEnabled="false" class="p-3 mb-4 border rounded" />
+                
+                <Label text="För- och efternamn:" class="text-lg mb-2" />
+                <TextField text="{{ name }}" hint="Ange ditt namn" class="p-3 mb-4 border rounded" returnKeyType="next" />
+                
+                <Label text="Förskola och Avdelning:" class="text-lg mb-2" />
+                <TextField text="{{ school }}" hint="Ange förskola och avdelning" class="p-3 mb-4 border rounded" returnKeyType="next" />
+                
+                <Label text="Kontaktperson:" class="text-lg mb-2" />
+                <TextField text="{{ contact }}" hint="Ange kontaktperson" class="p-3 mb-4 border rounded" returnKeyType="next" />
+                
+                <Label text="Beskriv ditt ärende:" class="text-lg mb-2" />
+                <TextView text="{{ description }}" hint="Beskriv ditt ärende här" class="p-3 mb-4 border rounded" height="100" returnKeyType="done" />
+                
+                <Button text="Välj bild" tap="{{ onSelectImage }}" class="-outline mb-3" />
+                <Image src="{{ selectedImage }}" class="mb-4" height="200" visibility="{{ selectedImage ? 'visible' : 'collapsed' }}" stretch="aspectFit" />
+                
+                <ActivityIndicator busy="{{ isLoading }}" class="mb-3" />
+                
+                <Button text="Skicka" tap="{{ onSubmit }}" class="-primary mb-3" isEnabled="{{ !isLoading }}" />
+                
+                <Label text="{{ errorMessage }}" class="text-sm text-center text-red-500" textWrap="true" visibility="{{ errorMessage ? 'visible' : 'collapsed' }}" />
+                <Label text="{{ successMessage }}" class="text-sm text-center text-green-500" textWrap="true" visibility="{{ successMessage ? 'visible' : 'collapsed' }}" />
+            </StackLayout>
+        </GridLayout>
+    </ScrollView>
+</Page>
