@@ -65,24 +65,22 @@ export function onNavigatingTo(args) {
         viewModel.set('successMessage', '');
         
         try {
-            // Crear objeto con los datos asegurándonos de obtener los valores actualizados
+            // Crear objeto con los datos usando los nombres de campos correctos
             const formData = new URLSearchParams();
-            formData.append('timestamp', viewModel.get('timestamp') || '');
-            formData.append('name', viewModel.get('name') || '');
-            formData.append('school', viewModel.get('school') || '');
-            formData.append('description', viewModel.get('description') || '');
+            formData.append('entry.2', viewModel.get('name') || '');
+            formData.append('entry.3', viewModel.get('school') || '');
+            formData.append('entry.5', viewModel.get('description') || '');
             formData.append('image', viewModel.get('imageBase64') || '');
 
             // Log de verificación
             console.log('Datos a enviar:');
-            console.log('timestamp:', formData.get('timestamp'));
-            console.log('name:', formData.get('name'));
-            console.log('school:', formData.get('school'));
-            console.log('description:', formData.get('description'));
+            console.log('entry.2 (name):', formData.get('entry.2'));
+            console.log('entry.3 (school):', formData.get('entry.3'));
+            console.log('entry.5 (description):', formData.get('entry.5'));
             console.log('image exists:', !!formData.get('image'));
             
             console.log('Iniciando petición fetch...');
-            const response = await fetch('https://script.google.com/macros/s/AKfycbxL39IQdvm6fAJHIy5pjen9LbVDVuaDyULpGOZd03zT_xPGsVoJkDQZbtVNQLfzh8uqXA/exec', {
+            const response = await fetch('https://script.google.com/macros/s/AKfycby6gCIkuJNOL584J4bGGZYTh8oBHRPZ7uKUEnwh9-tknyscbcfxxmMmE1mO35kNZT0mfQ/exec', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -128,3 +126,5 @@ export function onNavigatingTo(args) {
     
     page.bindingContext = viewModel;
 }
+
+//2025-01-20 14:27
