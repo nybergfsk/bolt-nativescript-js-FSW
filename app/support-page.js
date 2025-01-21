@@ -1,4 +1,4 @@
-import { Observable, ImageSource } from '@nativescript/core';
+import { Observable, ImageSource, ScrollView, Frame } from '@nativescript/core';
 import * as imagepicker from '@nativescript/imagepicker';
 
 export function onNavigatingTo(args) {
@@ -7,10 +7,11 @@ export function onNavigatingTo(args) {
     
     // Initialize properties
     viewModel.timestamp = new Date().toLocaleString('sv-SE');
-    viewModel.name = "";
     viewModel.school = "";
+    viewModel.contact = "";
     viewModel.description = "";
     viewModel.selectedImage = null;
+    viewModel.imageBase64 = null;
     viewModel.isLoading = false;
     viewModel.errorMessage = "";
     viewModel.successMessage = "";
@@ -35,7 +36,7 @@ export function onNavigatingTo(args) {
                 const base64Image = compressedImageSource.toBase64String("jpeg", 80);
                 viewModel.set('selectedImage', imageSource);
                 viewModel.set('imageBase64', base64Image);
-                console.log('Imagen seleccionada y procesada correctamente');
+                console.log('Bilden vald och bearbetad korrekt');
             }
         } catch (error) {
             console.error('Error selecting image:', error);
@@ -44,19 +45,18 @@ export function onNavigatingTo(args) {
     };
     
     viewModel.onSubmit = async () => {
-        console.log('Iniciando envío del formulario...');
+        console.log('Startar formulärinlämning...');
         
-        // Validación detallada
-        if (!viewModel.get('name')) {
-            viewModel.set('errorMessage', 'El nombre es obligatorio');
+        if (!viewModel.get('school')) {
+            viewModel.set('errorMessage', 'Förkolan är obligatorisk');
             return;
         }
-        if (!viewModel.get('school')) {
-            viewModel.set('errorMessage', 'La escuela es obligatoria');
+        if (!viewModel.get('contact')) {
+            viewModel.set('errorMessage', 'Kontaktperson är obligatorisk');
             return;
         }
         if (!viewModel.get('description')) {
-            viewModel.set('errorMessage', 'La descripción es obligatoria');
+            viewModel.set('errorMessage', 'Beskrivning är obligatorisk');
             return;
         }
         
@@ -65,22 +65,14 @@ export function onNavigatingTo(args) {
         viewModel.set('successMessage', '');
         
         try {
-            // Crear objeto con los datos usando los nombres de campos correctos
             const formData = new URLSearchParams();
-            formData.append('entry.2', viewModel.get('name') || '');
-            formData.append('entry.3', viewModel.get('school') || '');
-            formData.append('entry.5', viewModel.get('description') || '');
+            formData.append('school', viewModel.get('school') || '');
+            formData.append('contact', viewModel.get('contact') || '');
+            formData.append('description', viewModel.get('description') || '');
             formData.append('image', viewModel.get('imageBase64') || '');
-
-            // Log de verificación
-            console.log('Datos a enviar:');
-            console.log('entry.2 (name):', formData.get('entry.2'));
-            console.log('entry.3 (school):', formData.get('entry.3'));
-            console.log('entry.5 (description):', formData.get('entry.5'));
-            console.log('image exists:', !!formData.get('image'));
             
-            console.log('Iniciando petición fetch...');
-            const response = await fetch('https://script.google.com/macros/s/AKfycby6gCIkuJNOL584J4bGGZYTh8oBHRPZ7uKUEnwh9-tknyscbcfxxmMmE1mO35kNZT0mfQ/exec', {
+            console.log('Initierar hämtningsbegäran...');
+            const response = await fetch('https://script.google.com/macros/s/AKfycbyNWT7pbOWhM9Wt6qNfbuldJVqGSaOe9NxCFKyhkWzU_AMFaGGtWTzU9qr11ClnmOMLng/exec', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -88,26 +80,22 @@ export function onNavigatingTo(args) {
                 body: formData.toString()
             });
             
-            console.log('Respuesta recibida, status:', response.status);
+            console.log('Svar mottaget, status:', response.status);
             const responseText = await response.text();
-            console.log('Respuesta texto:', responseText);
             
             let result;
             try {
                 result = JSON.parse(responseText);
-                console.log('Respuesta parseada:', result);
             } catch (e) {
-                console.error('Error parseando respuesta:', e);
-                throw new Error('Error en formato de respuesta del servidor');
+                console.error('Fel parsed svar:', e);
+                throw new Error('Fel i serverns svarsformat');
             }
             
             if (result.status === 'success') {
-                console.log('Envío exitoso, limpiando formulario');
                 viewModel.set('successMessage', 'Formuläret har skickats framgångsrikt!');
                 
-                // Reset form
-                viewModel.set('name', '');
                 viewModel.set('school', '');
+                viewModel.set('contact', '');
                 viewModel.set('description', '');
                 viewModel.set('selectedImage', null);
                 viewModel.set('imageBase64', null);
@@ -120,11 +108,20 @@ export function onNavigatingTo(args) {
             viewModel.set('errorMessage', 'Ett fel uppstod: ' + error.message);
         } finally {
             viewModel.set('isLoading', false);
-            console.log('Proceso de envío finalizado');
+            console.log('Leveransprocessen är klar');
+            Frame.topmost().navigate("tack");
         }
+    };
+
+    // Lógica para gestionar el foco y desplazamiento
+    viewModel.onFocus = (args) => {
+        const textField = args.object;
+        const scrollView = page.getViewById("mainScrollView");
+
+        setTimeout(() => {
+            scrollView.scrollToVerticalOffset(textField.getLocationRelativeTo(scrollView).y, true);
+        }, 300);
     };
     
     page.bindingContext = viewModel;
 }
-
-//2025-01-20 14:27
