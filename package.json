@@ -9,13 +9,16 @@
   "dependencies": {
     "@nativescript/camera": "~5.0.0",
     "@nativescript/core": "~8.8.0",
-    "@nativescript/imagepicker": "~1.0.0"
+    "@nativescript/imagepicker": "~1.0.0",
+    "fs-extra": "^11.3.0",
+    "nativescript-bottom-navigation": "^2.0.5"
   },
   "devDependencies": {
+    "@nativescript/android": "8.8.6",
     "@nativescript/preview-cli": "^1.0.14",
     "@nativescript/stackblitz": "^0.0.8",
     "@nativescript/tailwind": "^2.1.0",
-    "@nativescript/webpack": "~5.0.0",
+    "@nativescript/webpack": "^5.0.22",
     "tailwindcss": "~3.4.0"
   }
 }
