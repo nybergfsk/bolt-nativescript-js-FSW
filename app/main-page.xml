@@ -1,8 +1,51 @@
-<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo">
-    <ActionBar title="My App" icon="" />
-    <StackLayout class="p-4">
-        <Label text="Please tap me" class="text-3xl text-center" />
-        <Button text="TAP" tap="{{ onTap }}" class="-primary" />
-        <Label text="{{ message }}" class="text-lg text-center text-gray-400" textWrap="true" />
-    </StackLayout>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="bg-gray-100">
+    <ActionBar class="bg-verde-100">
+        <StackLayout orientation="horizontal" class="p-1">
+            <Label text="Fastighetssamordnare" class="text-xl text-white font-bold" />
+        </StackLayout>
+    </ActionBar>
+    <ScrollView>
+        <StackLayout class="p-4">
+    <!-- Título -->
+    <Label text="Välkommen till" class="text-2xl text-center font-bold" textWrap="true" />
+    <Label text="Fastighetsappen!" class="text-2xl text-center font-bold mb-10" textWrap="true" />
+
+    <!-- Descripción -->
+            <Label 
+                text="Vi är glada att ha dig här! Denna app är designad för att hjälpa dig att enkelt hantera ärenden och frågor som rör våra förskolor. Oavsett om det handlar om felanmälningar, städning, IT-frågor, nycklar och koder, eller andra fastighetsrelaterade behov, så kan du här skapa ett ärende med några få klick." 
+                class="text-gray-700 mb-4" 
+                textWrap="true" 
+            />
+            <Label 
+                text="Obs! Instruktioner" 
+                class="text-gray-700 mb-4 font-bold" 
+                textWrap="true" 
+            />
+            
+            <Label 
+                text="- Ta en bild av det problem du behöver hjälp med.
+- Fyll i textfälten, förskola och avdelning, kontaktperson och beskrivning av ärendet.
+- Välj den bild du tidigare tagit
+- Skicka slutligen ditt ärende." 
+                class="text-gray-700 mb-4" 
+                textWrap="true" 
+            />
+
+            <Label text="Viktigt att tänka på: Om din begäran gäller inlärningsmiljön, till exempel att sätta upp hyllor eller flytta möbler, se till att detta är godkänt av biträdande rektor innan du skickar in begäran." 
+            class="text-gray-700" 
+                textWrap="true" 
+                />
+
+            <Label 
+                text="Tack för att du bidrar till en trygg och säker miljö för våra barn och personal. Tillsammans skapar vi en bättre arbetsplats!" 
+                class="text-gray-700 mt-3" 
+                textWrap="true" 
+            />
+                        <!-- Botón de ejemplo -->
+ <button text="Skapa ett ärende" tap="onSupportTap" class="box-shadow -outline p-3 bg-verde-100 font-bold rounded-lg mt-3 text-white"/>
+
+        </StackLayout>
+
+    </ScrollView>
+
 </Page>

@@ -1,4 +1,4 @@
-import { Observable, ImageSource, ScrollView, Frame } from '@nativescript/core';
+import { Observable, ImageSource } from '@nativescript/core';
 import * as imagepicker from '@nativescript/imagepicker';
 
 export function onNavigatingTo(args) {
@@ -7,14 +7,23 @@ export function onNavigatingTo(args) {
     
     // Initialize properties
     viewModel.timestamp = new Date().toLocaleString('sv-SE');
+    viewModel.name = "";
     viewModel.school = "";
-    viewModel.contact = "";
+    viewModel.contact = ""; // Añadido para coincidir con el XML
     viewModel.description = "";
     viewModel.selectedImage = null;
-    viewModel.imageBase64 = null;
     viewModel.isLoading = false;
     viewModel.errorMessage = "";
     viewModel.successMessage = "";
+    ;
+
+    // Function to hide the keyboard and scroll to the end
+    viewModel.onReturnPress = () => {
+        const textField = page.getViewById("description");
+        textField.dismissSoftInput(); // Hide the keyboard
+        const scrollView = page.getViewById("mainScrollView");
+        scrollView.scrollToVerticalOffset(scrollView.scrollableHeight, true); // Scroll to the end of the view
+    };
     
     viewModel.onSelectImage = async () => {
         try {
@@ -36,7 +45,7 @@ export function onNavigatingTo(args) {
                 const base64Image = compressedImageSource.toBase64String("jpeg", 80);
                 viewModel.set('selectedImage', imageSource);
                 viewModel.set('imageBase64', base64Image);
-                console.log('Bilden vald och bearbetad korrekt');
+                console.log('Imagen seleccionada y procesada correctamente');
             }
         } catch (error) {
             console.error('Error selecting image:', error);
@@ -45,18 +54,19 @@ export function onNavigatingTo(args) {
     };
     
     viewModel.onSubmit = async () => {
-        console.log('Startar formulärinlämning...');
+        console.log('Iniciando envío del formulario...');
         
+        // Validación detallada
         if (!viewModel.get('school')) {
-            viewModel.set('errorMessage', 'Förkolan är obligatorisk');
+            viewModel.set('errorMessage', 'Förskola och Avdelning är obligatoriskt');
             return;
         }
         if (!viewModel.get('contact')) {
-            viewModel.set('errorMessage', 'Kontaktperson är obligatorisk');
+            viewModel.set('errorMessage', 'Kontaktperson är obligatoriskt');
             return;
         }
         if (!viewModel.get('description')) {
-            viewModel.set('errorMessage', 'Beskrivning är obligatorisk');
+            viewModel.set('errorMessage', 'Beskrivning är obligatoriskt');
             return;
         }
         
@@ -65,14 +75,22 @@ export function onNavigatingTo(args) {
         viewModel.set('successMessage', '');
         
         try {
+            // Crear objeto con los datos usando los nombres de campos correctos
             const formData = new URLSearchParams();
-            formData.append('school', viewModel.get('school') || '');
-            formData.append('contact', viewModel.get('contact') || '');
-            formData.append('description', viewModel.get('description') || '');
+            formData.append('entry.2', viewModel.get('school') || '');  // Contacto en lugar de nombre
+            formData.append('entry.3', viewModel.get('contact') || '');
+            formData.append('entry.4', viewModel.get('description') || '');
             formData.append('image', viewModel.get('imageBase64') || '');
+
+            // Log de verificación
+            console.log('Datos a enviar:');
+            console.log('entry.2 (school):', formData.get('entry.2'));
+            console.log('entry.3 (contact):', formData.get('entry.3'));
+            console.log('entry.4 (description):', formData.get('entry.4'));
+            console.log('image exists:', !!formData.get('image'));
             
-            console.log('Initierar hämtningsbegäran...');
-            const response = await fetch('https://script.google.com/macros/s/AKfycbyNWT7pbOWhM9Wt6qNfbuldJVqGSaOe9NxCFKyhkWzU_AMFaGGtWTzU9qr11ClnmOMLng/exec', {
+            console.log('Iniciando petición fetch...');
+            const response = await fetch('https://script.google.com/macros/s/AKfycbxL39IQdvm6fAJHIy5pjen9LbVDVuaDyULpGOZd03zT_xPGsVoJkDQZbtVNQLfzh8uqXA/exec', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -80,26 +98,29 @@ export function onNavigatingTo(args) {
                 body: formData.toString()
             });
             
-            console.log('Svar mottaget, status:', response.status);
+            console.log('Respuesta recibida, status:', response.status);
             const responseText = await response.text();
+            console.log('Respuesta texto:', responseText);
             
             let result;
             try {
                 result = JSON.parse(responseText);
+                console.log('Respuesta parseada:', result);
             } catch (e) {
-                console.error('Fel parsed svar:', e);
-                throw new Error('Fel i serverns svarsformat');
+                console.error('Error parseando respuesta:', e);
+                throw new Error('Error en formato de respuesta del servidor');
             }
             
             if (result.status === 'success') {
+                console.log('Envío exitoso, limpiando formulario');
                 viewModel.set('successMessage', 'Formuläret har skickats framgångsrikt!');
                 
+                // Reset form
                 viewModel.set('school', '');
                 viewModel.set('contact', '');
                 viewModel.set('description', '');
                 viewModel.set('selectedImage', null);
                 viewModel.set('imageBase64', null);
-                viewModel.set('timestamp', new Date().toLocaleString('sv-SE'));
             } else {
                 throw new Error(result.message || 'Ett fel uppstod vid inlämning av formuläret');
             }
@@ -108,19 +129,8 @@ export function onNavigatingTo(args) {
             viewModel.set('errorMessage', 'Ett fel uppstod: ' + error.message);
         } finally {
             viewModel.set('isLoading', false);
-            console.log('Leveransprocessen är klar');
-            Frame.topmost().navigate("tack");
+            console.log('Proceso de envío finalizado');
         }
-    };
-
-    // Lógica para gestionar el foco y desplazamiento
-    viewModel.onFocus = (args) => {
-        const textField = args.object;
-        const scrollView = page.getViewById("mainScrollView");
-
-        setTimeout(() => {
-            scrollView.scrollToVerticalOffset(textField.getLocationRelativeTo(scrollView).y, true);
-        }, 300);
     };
     
     page.bindingContext = viewModel;
